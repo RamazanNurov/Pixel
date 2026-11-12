@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a21">
+  <meta name="description" content="Smart Caspian Transit — панель управления мультимодальной логистикой Каспийского коридора.">
+  <title>Smart Caspian Transit — Панель управления</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Основная навигация">
+      <a class="brand" href="#overview" aria-label="Smart Caspian Transit — главная">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5 27.5 15.2 10l7.1 12.3 4.1-7.1L35 32H8.2"/><path d="M5 27.5h13.8M22.3 22.3h12.2"/></svg></span>
+        <span class="brand-copy"><strong>SMART CASPIAN</strong><small>TRANSIT SYSTEM</small></span>
+      </a>
+
+      <div class="sidebar-caption">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <nav class="nav-list">
+        <a class="nav-item active" href="#overview"><span class="nav-icon">◫</span><span>Обзор</span></a>
+        <a class="nav-item" href="#shipments"><span class="nav-icon">▤</span><span>Грузы и контейнеры</span></a>
+        <a class="nav-item" href="#network"><span class="nav-icon">⌖</span><span>Портовая сеть</span></a>
+        <a class="nav-item" href="#documents"><span class="nav-icon">▧</span><span>Документы</span></a>
+        <a class="nav-item" href="#analytics"><span class="nav-icon">⌁</span><span>Аналитика</span></a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="corridor-card">
+          <div class="corridor-kicker"><span class="pulse-dot"></span> КОРИДОР СЕВЕР — ЮГ</div>
+          <strong>Каспийский узел</strong>
+          <span>5 транспортных узлов</span>
+          <div class="corridor-line"><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sidebar-user"><div class="avatar">SC</div><div><strong>Оператор системы</strong><small>Демо-профиль</small></div><span class="user-menu">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>SMART CASPIAN</span><b>/</b><strong>МОНИТОРИНГ</strong></div>
+        <div class="topbar-actions">
+          <div class="connection" id="connection-state"><span class="connection-dot"></span><span id="connection-text">Проверка API…</span></div>
+          <button class="icon-button" id="refresh-button" type="button" title="Обновить данные" aria-label="Обновить данные">↻</button>
+          <div class="topbar-date" id="current-date">—</div>
+        </div>
+      </header>
+
+      <section class="page-heading">
+        <div>
+          <div class="eyebrow">ЦИФРОВАЯ МОДЕЛЬ ТРАНСПОРТНОГО УЗЛА</div>
+          <h1>Панель управления</h1>
+          <p>Состояние логистической сети Каспийского региона в реальном времени</p>
+        </div>
+        <div class="heading-actions">
+          <button class="button button-secondary" id="reset-storm-button" type="button" hidden>↶ Сбросить сценарий</button>
+          <button class="button button-accent" id="storm-button" type="button"><span>ϟ</span> Смоделировать шторм</button>
+        </div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Ключевые показатели">
+        <article class="kpi-card">
+          <div class="kpi-top"><span>ПОРТЫ В СЕТИ</span><span class="kpi-icon teal">⌖</span></div>
+          <div class="kpi-value" id="kpi-ports">—</div>
+          <div class="kpi-foot"><span class="status-dot"></span><span id="kpi-ports-caption">Активные узлы</span></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-top"><span>ГРУЗЫ В ПУТИ</span><span class="kpi-icon blue">▤</span></div>
+          <div class="kpi-value" id="kpi-transit">—</div>
+          <div class="kpi-foot"><span class="muted-foot">По данным реестра</span></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-top"><span>ЗАДЕРЖАННЫЕ ГРУЗЫ</span><span class="kpi-icon amber">◷</span></div>
+          <div class="kpi-value" id="kpi-delayed">—</div>
+          <div class="kpi-foot"><span class="muted-foot">Требуют внимания</span></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-top"><span>ДОКУМЕНТЫ НА ПРОВЕРКЕ</span><span class="kpi-icon violet">▧</span></div>
+          <div class="kpi-value" id="kpi-documents">—</div>
+          <div class="kpi-foot"><span class="muted-foot">Ожидают верификации</span></div>
+        </article>
+      </section>
+
+      <section class="primary-grid">
+        <article class="panel map-panel" id="network">
+          <div class="panel-header map-header">
+            <div><div class="panel-kicker">ГЕОПРОСТРАНСТВЕННЫЙ МОНИТОРИНГ</div><h2>Карта транспортной сети</h2></div>
+            <div class="map-controls" role="group" aria-label="Тип карты">
+              <button class="map-layer active" data-layer="street" type="button">Схема</button>
+              <button class="map-layer" data-layer="satellite" type="button">Спутник</button>
+              <button class="map-layer" data-layer="hybrid" type="button">Гибрид</button>
+            </div>
+          </div>
+          <div class="map-wrap"><div id="caspian-map" role="application" aria-label="Карта портов Каспийского региона"></div><div class="map-overlay-label"><span class="pulse-dot"></span> СЕТЬ КАСПИЙСКОГО БАССЕЙНА</div><div class="map-legend"><span><i class="legend-port"></i> Порт</span><span><i class="legend-route"></i> Маршрут</span><span><i class="legend-closed"></i> Закрыт</span></div></div>
+          <div class="map-footer"><span id="map-port-count">Загрузка портов…</span><span class="map-coordinates">42° N&nbsp;&nbsp; 50° E</span></div>
+        </article>
+
+        <article class="panel shipment-focus" id="shipments">
+          <div class="panel-header"><div><div class="panel-kicker">КОНТРОЛИРУЕМАЯ ПОСТАВКА</div><h2>Отслеживание груза</h2></div><span class="live-tag"><i></i> LIVE</span></div>
+          <div class="shipment-id-row"><div><span class="small-label">КОНТЕЙНЕР</span><div class="container-number" id="focus-container">MSKU1234567</div></div><span class="status-pill in-transit" id="focus-status">В пути</span></div>
+          <div class="route-summary">
+            <div class="route-point"><span class="route-marker origin"></span><div><small>ОТПРАВЛЕНИЕ</small><strong id="focus-origin">Астрахань</strong><span id="focus-origin-country">Россия</span></div></div>
+            <div class="route-connector"><span></span><span></span><span></span></div>
+            <div class="route-point"><span class="route-marker destination"></span><div><small>НАЗНАЧЕНИЕ</small><strong id="focus-destination">Энзели</strong><span id="focus-destination-country">Иран</span></div></div>
+          </div>
+          <div class="shipment-stats"><div><span>МАССА</span><strong id="focus-weight">12 000 кг</strong></div><div><span>ОЦЕНКА МАРШРУТА</span><strong id="focus-duration">72 ч</strong></div></div>
+          <div class="shipment-description" id="focus-description">Контейнер с промышленным оборудованием</div>
+          <button class="text-action" id="show-route-button" type="button">Открыть маршрут <span>→</span></button>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel route-panel" id="route-details">
+          <div class="panel-header"><div><div class="panel-kicker">ЛОГИСТИЧЕСКАЯ ЦЕПОЧКА</div><h2>Маршрут контейнера</h2></div><span class="panel-meta" id="route-name">Север — Юг</span></div>
+          <div class="route-timeline" id="route-timeline"><div class="empty-state">Загружаем этапы маршрута…</div></div>
+        </article>
+
+        <article class="panel documents-panel" id="documents">
+          <div class="panel-header"><div><div class="panel-kicker">ТАМОЖЕННЫЙ КОНТУР</div><h2>Документы</h2></div><span class="count-badge" id="documents-count">0</span></div>
+          <div class="documents-list" id="documents-list"><div class="empty-state">Загружаем документы…</div></div>
+          <div class="documents-footer"><span id="documents-hint">Выберите документы для проверки</span><button class="button button-small button-secondary" id="verify-documents-button" type="button" disabled>Проверить выбранные</button></div>
+        </article>
+      </section>
+
+      <section class="bottom-grid" id="analytics">
+        <article class="panel analytics-panel">
+          <div class="panel-header"><div><div class="panel-kicker">ОПЕРАЦИОННЫЕ ДАННЫЕ</div><h2>Структура грузопотока</h2></div><span class="panel-meta">По статусам</span></div>
+          <div class="status-chart" id="status-chart"><div class="empty-state">Ожидаем данные аналитики…</div></div>
+        </article>
+        <article class="panel impact-panel">
+          <div class="panel-header"><div><div class="panel-kicker">УСТОЙЧИВАЯ ЛОГИСТИКА</div><h2>Экологический след</h2></div><span class="eco-tag">ESG</span></div>
+          <div class="impact-value"><strong id="co2-value">—</strong><span>кг CO₂</span></div>
+          <p>Расчётные выбросы по зарегистрированным маршрутам.</p>
+          <div class="impact-bar"><span id="co2-bar"></span></div>
+          <div class="impact-foot"><span>Данные из маршрутной модели</span><strong id="co2-caption">—</strong></div>
+        </article>
+      </section>
+
+      <footer class="page-footer"><span>SMART CASPIAN TRANSIT <b>•</b> DEMO ENVIRONMENT</span><span id="last-updated">Данные ещё не обновлялись</span></footer>
+    </main>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <div class="modal-backdrop" id="storm-modal" hidden>
+    <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="storm-modal-title">
+      <button class="modal-close" id="close-storm-modal" type="button" aria-label="Закрыть">×</button>
+      <div class="modal-symbol">ϟ</div><div class="panel-kicker">DEMO MODE / СЦЕНАРИЙ 01</div>
+      <h2 id="storm-modal-title">Смоделировать шторм</h2>
+      <p>Порт Махачкала будет временно закрыт. Система пересчитает статус груза и создаст альтернативный маршрут.</p>
+      <div class="scenario-impact"><span>Порт Махачкала</span><strong>Закрытие</strong><span>Расчётная задержка</span><strong>+12 часов</strong></div>
+      <div class="modal-actions"><button class="button button-secondary" id="cancel-storm-button" type="button">Отмена</button><button class="button button-accent" id="confirm-storm-button" type="button">Запустить сценарий</button></div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
