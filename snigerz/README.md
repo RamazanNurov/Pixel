@@ -29,3 +29,36 @@ API: `http://127.0.0.1:8000/api/`
 - `GET /api/graph/` — узлы графа (fallback из PostgreSQL)
 
 По умолчанию используется SQLite. Для PostgreSQL и Neo4j скопируйте `.env.example` в `.env` и заполните параметры.
+
+## Frontend и ML
+
+Frontend находится в `frontend/`. Запустите backend в одном терминале:
+
+```powershell
+python manage.py runserver
+```
+
+А в другом терминале из папки `snigerz` поднимите простой статический сервер:
+
+```powershell
+python -m http.server 5500 --directory frontend
+```
+
+После этого откройте `http://127.0.0.1:5500/`.
+
+ML endpoint:
+
+- `GET /api/ml/health/`
+- `POST /api/ml/predict/`
+
+Пример запроса:
+
+```json
+{
+  "weather_risk": 0.7,
+  "port_load": 0.8,
+  "distance_km": 1400,
+  "customs_check": true,
+  "sea_share": 0.9
+}
+```
