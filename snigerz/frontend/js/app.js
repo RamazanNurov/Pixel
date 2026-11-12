@@ -2,12 +2,28 @@ const API = 'http://127.0.0.1:8000/api';
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const state = { cargo: [], ports: [], routes: [], documents: [], prediction: null };
+let accessToken = localStorage.getItem('sct_access');
+let refreshToken = localStorage.getItem('sct_refresh');
 
 async function api(path, options = {}) {
-  const response = await fetch(`${API}${path}`, { headers: {'Content-Type': 'application/json'}, ...options });
+  const headers = {'Content-Type': 'application/json', ...(options.headers || {})};
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+  let response = await fetch(`${API}${path}`, {...options, headers});
+  if (response.status === 401 && refreshToken && !path.includes('/auth/')) {
+    const renewed = await fetch(`${API}/auth/refresh/`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({refresh:refreshToken})});
+    if (renewed.ok) { const tokens = await renewed.json(); saveTokens(tokens); headers.Authorization = `Bearer ${accessToken}`; response = await fetch(`${API}${path}`, {...options, headers}); }
+  }
   if (!response.ok) throw new Error(`API ${response.status}`);
   return response.json();
 }
+function saveTokens(tokens) { accessToken = tokens.access; refreshToken = tokens.refresh || refreshToken; localStorage.setItem('sct_access', accessToken); if (tokens.refresh) localStorage.setItem('sct_refresh', refreshToken); }
+function clearTokens() { accessToken = null; refreshToken = null; localStorage.removeItem('sct_access'); localStorage.removeItem('sct_refresh'); }
+function showAuthError(id, message) { $(id).textContent = message; }
+function setAuthenticated(user) { $('#auth-gate').classList.add('hidden'); $('#user-chip').textContent = user.first_name || user.username; }
+async function loadCurrentUser() { const user = await api('/auth/me/'); setAuthenticated(user); await loadData(); }
+async function login(event) { event.preventDefault(); const form = new FormData(event.target); try { const tokens = await api('/auth/login/', {method:'POST', body:JSON.stringify({username:form.get('username'), password:form.get('password')})}); saveTokens(tokens); showAuthError('#login-error', ''); await loadCurrentUser(); } catch (error) { showAuthError('#login-error', 'Неверный логин или пароль.'); } }
+async function register(event) { event.preventDefault(); const form = new FormData(event.target); try { const result = await api('/auth/register/', {method:'POST', body:JSON.stringify(Object.fromEntries(form.entries()))}); saveTokens(result); showAuthError('#register-error', ''); await loadCurrentUser(); } catch (error) { showAuthError('#register-error', 'Проверьте данные: пароль минимум 8 символов, логин уникален.'); } }
+async function logout() { try { if (refreshToken) await api('/auth/logout/', {method:'POST', body:JSON.stringify({refresh:refreshToken})}); } catch (error) {} clearTokens(); location.reload(); }
 function toast(message) { const node = $('#toast'); node.textContent = message; node.classList.add('show'); setTimeout(() => node.classList.remove('show'), 3200); }
 function statusLabel(status) { return {in_transit:'В пути', delayed:'Задержан', created:'Создан', delivered:'Доставлен', inspection:'На проверке'}[status] || status; }
 function riskClass(value) { return value >= .67 ? 'risk-high' : value >= .34 ? 'risk-mid' : 'risk-low'; }
@@ -53,4 +69,6 @@ async function verifyDocuments() { try { const result = await api('/customs/veri
 $$('.nav-item').forEach(item => item.addEventListener('click', () => showSection(item.dataset.section)));
 $$('[data-section-jump]').forEach(item => item.addEventListener('click', () => showSection(item.dataset.sectionJump)));
 $('#storm-btn').addEventListener('click', simulateStorm); $('#refresh-btn').addEventListener('click', loadData); $('#verify-btn').addEventListener('click', verifyDocuments);
-loadData();
+$$('[data-auth-tab]').forEach(tab => tab.addEventListener('click', () => { const registerMode = tab.dataset.authTab === 'register'; $$('.auth-tab').forEach(item => item.classList.toggle('active', item === tab)); $('#login-form').classList.toggle('hidden', registerMode); $('#register-form').classList.toggle('hidden', !registerMode); }));
+$('#login-form').addEventListener('submit', login); $('#register-form').addEventListener('submit', register); $('#logout-btn').addEventListener('click', logout);
+if (accessToken) loadCurrentUser().catch(() => { clearTokens(); });

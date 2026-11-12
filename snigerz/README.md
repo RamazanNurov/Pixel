@@ -27,6 +27,11 @@ API: `http://127.0.0.1:8000/api/`
 - `GET /api/customs/` — документы
 - `POST /api/customs/verify/` — demo-проверка документов
 - `GET /api/graph/` — узлы графа (fallback из PostgreSQL)
+- `POST /api/auth/register/` — регистрация
+- `POST /api/auth/login/` — вход и получение JWT
+- `POST /api/auth/refresh/` — обновление access-токена
+- `GET/PATCH /api/auth/me/` — текущий пользователь
+- `POST /api/auth/logout/` — выход и blacklist refresh-токена
 
 По умолчанию используется SQLite. Для PostgreSQL и Neo4j скопируйте `.env.example` в `.env` и заполните параметры.
 
@@ -45,6 +50,12 @@ python -m http.server 5500 --directory frontend
 ```
 
 После этого откройте `http://127.0.0.1:5500/`.
+
+Все API, кроме `/api/health/` и endpoints авторизации, требуют заголовок:
+
+```text
+Authorization: Bearer <access-token>
+```
 
 ML endpoint:
 

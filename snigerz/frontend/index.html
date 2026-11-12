@@ -3,9 +3,18 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Caspian Transit — Digital Twin</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
+  <div id="auth-gate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-brand"><span class="brand-mark">✦</span><div><strong>SMART CASPIAN</strong><small>TRANSIT / DIGITAL TWIN</small></div></div>
+      <div class="auth-tabs"><button class="auth-tab active" data-auth-tab="login">Вход</button><button class="auth-tab" data-auth-tab="register">Регистрация</button></div>
+      <form id="login-form" class="auth-form"><label>Логин<input name="username" required autocomplete="username" placeholder="logistics_user"></label><label>Пароль<input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"></label><button class="primary-button" type="submit">Войти <span>→</span></button><p class="auth-error" id="login-error"></p></form>
+      <form id="register-form" class="auth-form hidden"><label>Логин<input name="username" required minlength="3" autocomplete="username"></label><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Пароль<input name="password" type="password" required minlength="8" autocomplete="new-password"></label><label>Повторите пароль<input name="password_confirm" type="password" required minlength="8" autocomplete="new-password"></label><button class="primary-button" type="submit">Создать аккаунт <span>→</span></button><p class="auth-error" id="register-error"></p></form>
+      <p class="auth-note">Доступ к панели защищён JWT-авторизацией</p>
+    </div>
+  </div>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand"><span class="brand-mark">✦</span><div><strong>SMART CASPIAN</strong><small>TRANSIT / DIGITAL TWIN</small></div></div>
@@ -20,7 +29,7 @@
       <div class="sidebar-bottom"><div class="connection"><i></i><span>API подключен</span><small id="api-time">--:--</small></div><div class="user"><span class="avatar">Р</span><div><b>Руководитель</b><small>logistics control</small></div><span>•••</span></div></div>
     </aside>
     <main class="main-content">
-      <header class="topbar"><div><span class="eyebrow">Трек 3 · цифровая экосистема МТК «Север–Юг»</span><h1 id="page-title">Панель управления</h1></div><div class="top-actions"><span class="live"><i></i> LIVE DATA</span><button class="icon-button" id="refresh-btn">↻</button><button class="storm-button" id="storm-btn">⚡ Симулировать шторм</button></div></header>
+      <header class="topbar"><div><span class="eyebrow">Трек 3 · цифровая экосистема МТК «Север–Юг»</span><h1 id="page-title">Панель управления</h1></div><div class="top-actions"><span class="live"><i></i> LIVE DATA</span><span class="user-chip" id="user-chip">—</span><button class="icon-button" id="logout-btn" title="Выйти">↪</button><button class="icon-button" id="refresh-btn">↻</button><button class="storm-button" id="storm-btn">⚡ Симулировать шторм</button></div></header>
       <section id="overview" class="page-section active-section">
         <div class="hero-grid"><div class="hero-copy"><span class="badge">DIGITAL TWIN · MVP</span><h2>Каспийский коридор<br><em>под контролем</em></h2><p>Единое окно логиста для прогнозирования задержек, контроля грузов и перестроения мультимодальных маршрутов.</p><div class="hero-actions"><button class="primary-button" data-section-jump="analytics">Открыть аналитику <span>→</span></button><span class="last-update">Последнее обновление<br><b id="last-update">только что</b></span></div></div><div class="hero-orbit"><div class="orbit-ring ring-1"></div><div class="orbit-ring ring-2"></div><div class="orbit-core">SCT<span>AI</span></div><div class="orbit-node n1">ASF</div><div class="orbit-node n2">MHK</div><div class="orbit-node n3">BAK</div><div class="orbit-node n4">ENZ</div></div></div>
         <div class="section-heading"><div><span class="eyebrow purple">СИСТЕМНЫЙ МОНИТОРИНГ</span><h3>Статус коридора</h3></div><span class="date-chip">12 НОЯБРЯ 2026 · 14:42 MSK</span></div>
