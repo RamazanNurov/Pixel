@@ -20,6 +20,8 @@ API: `http://127.0.0.1:8000/api/`
 - `GET /api/ports/` — порты
 - `GET /api/cargo/` — грузы
 - `GET /api/cargo/MSKU1234567/route/` — маршрут контейнера
+- `GET /api/cargo/MSKU1234567/location/` — приблизительная позиция
+- `POST /api/cargo/MSKU1234567/location/` — обновить координаты груза
 - `GET /api/routes/` — маршруты
 - `GET /api/analytics/` — аналитика
 - `POST /api/simulation/storm/` — Demo Mode: шторм в MHK
@@ -51,6 +53,8 @@ python -m http.server 5500 --directory frontend
 
 После этого откройте `http://127.0.0.1:5500/`.
 
+Карта в dashboard использует Leaflet и OpenStreetMap. Она показывает порты, маршрут между узлами и приблизительную позицию первого активного контейнера.
+
 Все API, кроме `/api/health/` и endpoints авторизации, требуют заголовок:
 
 ```text
@@ -61,6 +65,7 @@ ML endpoint:
 
 - `GET /api/ml/health/`
 - `POST /api/ml/predict/`
+- `POST /api/ml/predict-cargo/` — прогноз по реальному контейнеру и его маршруту
 
 Пример запроса:
 

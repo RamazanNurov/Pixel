@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Caspian Transit — Digital Twin</title>
-  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/auth.css"><link rel="stylesheet" href="css/map.css"><link rel="stylesheet" href="css/responsive.css"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 </head>
 <body>
   <div id="auth-gate" class="auth-gate">
@@ -26,7 +26,7 @@
         <button class="nav-item" data-section="customs"><span>◇</span> Таможня</button>
         <button class="nav-item" data-section="analytics"><span>◒</span> Аналитика</button>
       </nav>
-      <div class="sidebar-bottom"><div class="connection"><i></i><span>API подключен</span><small id="api-time">--:--</small></div><div class="user"><span class="avatar">Р</span><div><b>Руководитель</b><small>logistics control</small></div><span>•••</span></div></div>
+      <div class="sidebar-bottom"><div class="connection"><i></i><span>API подключен</span><small id="api-time">--:--</small></div><div class="user" id="sidebar-user"><span class="avatar" id="user-avatar">—</span><div><b id="sidebar-username">Пользователь</b><small id="sidebar-email">account</small></div><span class="user-role" id="sidebar-role">user</span></div></div>
     </aside>
     <main class="main-content">
       <header class="topbar"><div><span class="eyebrow">Трек 3 · цифровая экосистема МТК «Север–Юг»</span><h1 id="page-title">Панель управления</h1></div><div class="top-actions"><span class="live"><i></i> LIVE DATA</span><span class="user-chip" id="user-chip">—</span><button class="icon-button" id="logout-btn" title="Выйти">↪</button><button class="icon-button" id="refresh-btn">↻</button><button class="storm-button" id="storm-btn">⚡ Симулировать шторм</button></div></header>
@@ -43,5 +43,5 @@
       <section id="analytics" class="page-section"><div class="section-heading"><div><span class="eyebrow purple">PREDICTIVE ANALYTICS</span><h3>Аналитика и ML-прогноз</h3></div></div><div class="analytics-grid"><article class="panel ml-panel"><div class="panel-head"><div><span class="eyebrow">RANDOM FOREST</span><h3>Прогноз задержки</h3></div><span class="ai-badge">✦ ACTIVE</span></div><div class="big-risk"><b id="analytics-risk">—%</b><span>текущий риск</span></div><div class="risk-meter large"><i id="analytics-meter"></i></div><ul class="recommendations" id="recommendations"></ul></article><article class="panel"><div class="panel-head"><div><span class="eyebrow">FEATURE IMPORTANCE</span><h3>Факторы модели</h3></div></div><div class="bars"><div><span>Погодный риск</span><i style="width:78%"></i></div><div><span>Загрузка порта</span><i style="width:61%"></i></div><div><span>Доля моря</span><i style="width:44%"></i></div><div><span>Таможенная проверка</span><i style="width:32%"></i></div></div></article></div></section>
     </main>
   </div>
-  <div id="toast" class="toast"></div><script src="js/app.js"></script>
+  <div id="toast" class="toast"></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script src="js/app.js"></script>
 </body></html>
